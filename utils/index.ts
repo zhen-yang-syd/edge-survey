@@ -15,3 +15,4 @@ export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 export const NEXT_TWILIO_SID = process.env.NEXT_TWILIO_SID;
 export const NEXT_TWILIO_AUTH_TOKEN = process.env.NEXT_TWILIO_AUTH_TOKEN;
 export const NEXT_TWILIO_MESSAGE_SERVICE_SID = process.env.NEXT_TWILIO_MESSAGE_SERVICE_SID;
+export const NEXT_QR_API_KEY = process.env.NEXT_QR_API_KEY;
