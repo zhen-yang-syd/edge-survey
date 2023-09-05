@@ -1,0 +1,23 @@
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+export const EMAIL_TOKEN_SECRET_KEY =
+  process.env.NEXT_PUBLIC_EMAIL_TOKEN_SECRET_KEY;
+export const NEXT_PUBLIC_PASSWORD_SECRET_KEY =
+  process.env.NEXT_PUBLIC_PASSWORD_SECRET_KEY;
+export const NEXT_PUBLIC_TOKEN_SECRET_KEY =
+  process.env.NEXT_PUBLIC_TOKEN_SECRET_KEY;
+export const NEXT_PUBLIC_SANITY_TOKEN =
+  process.env.NEXT_PUBLIC_SANITY_TOKEN;
+export const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
+export const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+export const REDIS_URL = process.env.REDIS_URL;
+export const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL;
+export const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+export const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
+
+export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+export const NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+export const NEXT_TWILIO_SID = process.env.NEXT_TWILIO_SID;
+export const NEXT_TWILIO_AUTH_TOKEN = process.env.NEXT_TWILIO_AUTH_TOKEN;
+export const NEXT_TWILIO_MESSAGE_SERVICE_SID = process.env.NEXT_TWILIO_MESSAGE_SERVICE_SID;
+export const NEXT_BCR_API_KEY = process.env.NEXT_BCR_API_KEY;
+export const NEXT_BCR_ENDPOINT = process.env.NEXT_BCR_ENDPOINT;
