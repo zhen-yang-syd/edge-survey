@@ -1,0 +1,60 @@
+Arguments: 
+  /Users/zhenyang/.nvm/versions/node/v18.4.0/bin/node /usr/local/Cellar/yarn/1.22.18/libexec/bin/yarn.js add @sanity/client @sendgrid/mail @stripe/stripe-js antd axios crypto-js framer-motion js-cookie jsonwebtoken react-icons sass stripe twilio uudiv4
+
+PATH: 
+  /Users/zhenyang/.asdf/shims:/usr/local/opt/asdf/libexec/bin:/usr/local/opt/mongodb-community@4.2/bin:/Users/zhenyang/.nvm/versions/node/v18.4.0/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin
+
+Yarn version: 
+  1.22.18
+
+Node version: 
+  18.4.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/uudiv4: Not found
+      at params.callback [as _callback] (/usr/local/Cellar/yarn/1.22.18/libexec/lib/cli.js:66138:18)
+      at self.callback (/usr/local/Cellar/yarn/1.22.18/libexec/lib/cli.js:140883:22)
+      at Request.emit (node:events:537:28)
+      at Request.<anonymous> (/usr/local/Cellar/yarn/1.22.18/libexec/lib/cli.js:141855:10)
+      at Request.emit (node:events:537:28)
+      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.22.18/libexec/lib/cli.js:141777:12)
+      at Object.onceWrapper (node:events:651:28)
+      at IncomingMessage.emit (node:events:549:35)
+      at endReadableNT (node:internal/streams/readable:1359:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+npm manifest: 
+  {
+    "name": "my-app",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "next lint"
+    },
+    "dependencies": {
+      "@types/node": "20.5.9",
+      "@types/react": "18.2.21",
+      "@types/react-dom": "18.2.7",
+      "autoprefixer": "10.4.15",
+      "eslint": "8.48.0",
+      "eslint-config-next": "13.4.19",
+      "next": "13.4.19",
+      "postcss": "8.4.29",
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "tailwindcss": "3.3.3",
+      "typescript": "5.2.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
