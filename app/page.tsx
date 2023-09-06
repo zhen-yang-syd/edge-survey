@@ -51,7 +51,7 @@ export default async function Home() {
           <div className='text-center text-white sm:text-3xl text-lg'>Questionnair Creator</div>
           {data.data.length > 0 ? <div>
             yes
-          </div> : <div className='w-full h-[calc(100%-28px)] flex justify-center flex-col items-center'>
+          </div> : <div className='w-full h-[calc(100%-50px)] flex justify-center flex-col items-center'>
             <CreateSurvey />
           </div>}
         </div>

@@ -74,14 +74,14 @@ const CreateSurvey = () => {
         const create = async () => {
             const questionPromises = questions.map((question: any) => createQuestion(question))
             const questionRes = await Promise.all(questionPromises)
-            const questionIds = questionRes.map((res: any) => res.data.id)
-            console.log('questionIds', questionIds)            
-            // const survey = {
-            //     title,
-            //     target,
-            //     backgroundImage,
-            //     questions: questionIds
-            // }
+            const questionIds = questionRes.map((res: any) => res.data._id)
+            console.log('questionIds', questionIds)    
+            const survey = {
+                title,
+                target,
+                backgroundImage,
+                questions: questionIds
+            }
             // const surveyRes = await createSurvey(survey)
             // console.log('surveyRes', surveyRes)
         }

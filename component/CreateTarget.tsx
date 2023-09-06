@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Divider, Input, Select, Space, Button, message } from 'antd';
+import { Divider, Input, Select, Space, Button, message, Skeleton } from 'antd';
 import type { InputRef } from 'antd';
 import axios from 'axios';
 import { BASE_URL } from '@/utils';
@@ -16,23 +16,27 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
     const [name, setName] = useState('');
     const inputRef = useRef<InputRef>(null);
     const [diabled, setDisabled] = useState(true)
+    const [loading, setLoading] = useState<boolean>(false)
 
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
     };
-    useEffect(() => {
-        setTarget(name)
-        console.log('name', name)
-    }, [name])
+    // useEffect(() => {
+    //     setTarget(name)
+    //     console.log('name', name)
+    // }, [name])
 
     const addItem = async (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
         e.preventDefault();
-        setItems([...items, name || `New item ${index++}`]);
+        setLoading(true)
         setName('');
         // create a new item
         const data = await axios.post(`${BASE_URL}/api/target`, { name })
-        if(data) {
+        if (data) {
             message.success('Create target successfully')
+            setItems([...items, { value: data.data.data._id, label: data.data.data.name }]);
+            setTarget(data.data.data._id)
+            setLoading(false)
         }
         setTimeout(() => {
             inputRef.current?.focus();
@@ -42,9 +46,8 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
         const getData = async () => {
             const res = await axios.get(`${BASE_URL}/api/target`)
             console.log('res', res.data.data)
-            const data = res.data.data.map((item: any) => item.name)
+            const data = res.data.data.map((item: any) => ({ value: item._id, label: item.name }))
             setItems(data)
-            // setItems(res.data.data)
         }
         getData()
     }, [])
@@ -61,22 +64,24 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
             placeholder="Select target"
             dropdownRender={(menu) => (
                 <>
-                    {menu}
+                    {loading && items ? <Skeleton loading className='p-3' active/> : <>{menu}</>}
                     <Divider style={{ margin: '8px 0' }} />
-                    <Space style={{ padding: '0 8px 4px' }}>
-                        <Input
-                            placeholder="Please enter item"
-                            ref={inputRef}
-                            value={name}
-                            onChange={onNameChange}
-                        />
-                        <Button type="text" icon={<PlusOutlined />} onClick={addItem} disabled={diabled}>
-                            Add target
-                        </Button>
-                    </Space>
+                    {loading && items ? <Skeleton loading className='p-3' active/> : (
+                        <Space style={{ padding: '0 8px 4px' }}>
+                            <Input
+                                placeholder="Please enter item"
+                                ref={inputRef}
+                                value={name}
+                                onChange={onNameChange}
+                            />
+                            <Button type="text" icon={<PlusOutlined />} onClick={addItem} disabled={diabled}>
+                                Add target
+                            </Button>
+                        </Space>
+                    )}
                 </>
             )}
-            options={items.map((item: any) => ({ label: item, value: item }))}
+            options={items.map((item: any) => ({ label: item.label, value: item.value }))}
             onChange={(value) => {
                 setTarget(value);
             }}
@@ -84,4 +89,4 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
     );
 };
 
-export default CreateTarget;
+export default CreateTarget; 
