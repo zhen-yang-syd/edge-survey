@@ -21,12 +21,12 @@ export default async function Home() {
           components: {
             Radio: {
               colorPrimary: '#FAD403',
-              colorText: 'white',
+              colorText: 'black',
               lineHeight: 2.3,
             },
             Checkbox: {
               colorPrimary: '#FAD403',
-              colorText: 'white',
+              colorText: 'black',
               lineHeight: 2.3,
               borderRadiusSM: 14
             },

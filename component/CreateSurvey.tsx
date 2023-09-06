@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Modal, Button, Card, Form, Input, Space, Typography, ConfigProvider, Upload, Checkbox } from 'antd'
+import { Modal, Button, Card, Form, Input, Space, Typography, ConfigProvider, Upload, Checkbox, Radio } from 'antd'
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
@@ -70,6 +70,7 @@ const CreateSurvey = () => {
         }
     }
         , [target])
+    const [type, setType] = useState<string>('option')
     return (
         <>
             <Button onClick={showModal} className='text-white'>Create a New One</Button>
@@ -124,33 +125,42 @@ const CreateSurvey = () => {
                                         <Form.Item label="Question" name={[field.name, 'question']}>
                                             <Input />
                                         </Form.Item>
-                                        {/* Nest Form.List */}
-                                        <Form.Item label="Options">
-                                            <Form.List name={[field.name, 'option']}>
-                                                {(subFields, subOpt) => (
-                                                    <div style={{ display: 'flex', flexDirection: 'column', rowGap: 16 }}>
-                                                        {subFields.map((subField) => (
-                                                            <Space key={subField.key}>
-                                                                <Form.Item noStyle name={[subField.name]}>
-                                                                    <Input placeholder="option" />
-                                                                </Form.Item>
-                                                                <Form.Item noStyle name={[subField.name]}>
-                                                                    <Checkbox>Mandatory</Checkbox>
-                                                                </Form.Item>
-                                                                <CloseOutlined
-                                                                    onClick={() => {
-                                                                        subOpt.remove(subField.name);
-                                                                    }}
-                                                                />
-                                                            </Space>
-                                                        ))}
-                                                        <Button type="dashed" onClick={() => subOpt.add()} block>
-                                                            + Add Sub Item
-                                                        </Button>
-                                                    </div>
-                                                )}
-                                            </Form.List>
+                                        <Form.Item label="Required" name={[field.name, 'required']}>
+                                            <Checkbox>Required</Checkbox>
                                         </Form.Item>
+                                        <Form.Item label="Answer Type" name={[field.name, 'type']}>
+                                            <Radio.Group onChange={(e) => setType(e.target.value)} defaultValue={type}>
+                                                <Radio value="input">Text</Radio>
+                                                <Radio value="option">Options</Radio>
+                                            </Radio.Group>
+                                        </Form.Item>
+                                        {type === 'option' ?
+                                            <Form.Item label="Options">
+                                                <Form.List name={[field.name, 'option']}>
+                                                    {(subFields, subOpt) => (
+                                                        <div style={{ display: 'flex', flexDirection: 'column', rowGap: 16 }}>
+                                                            {subFields.map((subField) => (
+                                                                <Space key={subField.key}>
+                                                                    <Form.Item noStyle name={[subField.name]}>
+                                                                        <Input placeholder="option" />
+                                                                    </Form.Item>
+                                                                    {/* <Checkbox onChange={() => form.setFieldValue("a", "b")} /> */}
+                                                                    <CloseOutlined
+                                                                        onClick={() => {
+                                                                            subOpt.remove(subField.name);
+                                                                        }}
+                                                                    />
+                                                                </Space>
+                                                            ))}
+                                                            <Button type="dashed" onClick={() => subOpt.add()} block>
+                                                                + Add Sub Item
+                                                            </Button>
+                                                        </div>
+                                                    )}
+                                                </Form.List>
+                                            </Form.Item>
+                                            : null
+                                        }
                                     </Card>
                                 ))}
 
@@ -160,12 +170,14 @@ const CreateSurvey = () => {
                             </div>
                         )}
                     </Form.List>
-                    <Button htmlType="submit">
-                        Submit
-                    </Button>
-                    <Button>
-                        Cancel
-                    </Button>
+                    <div className='w-full flex flex-row items-center justify-between'>
+                        <Button htmlType="submit" block>
+                            Submit
+                        </Button>
+                        <Button block>
+                            Cancel
+                        </Button>
+                    </div>
                     <Form.Item noStyle shouldUpdate>
                         {() => (
                             <Typography>
@@ -174,7 +186,7 @@ const CreateSurvey = () => {
                         )}
                     </Form.Item>
                 </Form>
-            </Modal>
+            </Modal >
         </>
     )
 }
