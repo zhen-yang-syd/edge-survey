@@ -6,6 +6,8 @@ import ImgCrop from 'antd-img-crop';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { client } from '@/utils/client';
 import CreateTarget from './CreateTarget';
+import axios from 'axios';
+import { BASE_URL } from '@/utils';
 
 const CreateSurvey = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,6 +28,65 @@ const CreateSurvey = () => {
     const [form] = Form.useForm();
     const onFinish = (value: object) => {
         console.log(value);
+        // create question and survey
+        // {
+        //     "title": "t1",
+        //     "target": "t1",
+        //     "backgroundImage": "https://cdn.sanity.io/images/er52rfe6/production/709f5e1ba4c2d3bc027d4af1eba4fae2e03f2a8d-1023x1023.png",
+        //     "questions": [
+        //       {
+        //         "question": "q1",
+        //         "required": true,
+        //         "type": "text"
+        //       },
+        //       {
+        //         "question": "q2",
+        //         "type": "multipleChoice",
+        //         "option": [
+        //           "o1",
+        //           "o2",
+        //           "o3"
+        //         ]
+        //       },
+        //       {
+        //         "question": "q3",
+        //         "required": true,
+        //         "type": "singleChoice",
+        //         "option": [
+        //           "o1",
+        //           "o2",
+        //           "o3",
+        //           "o4"
+        //         ]
+        //       }
+        //     ]
+        //   }
+        // create each question, map the questions and create promise, then promise.all
+        const { title, target, backgroundImage, questions }: any = value
+        const createQuestion = async (question: any) => {
+            const res = await axios.post(`${BASE_URL}/api/question`, question)
+            return res.data
+        }
+        const createSurvey = async (survey: any) => {
+            const res = await axios.post(`${BASE_URL}/api/survey`, survey)
+            return res.data
+        }
+        const create = async () => {
+            const questionPromises = questions.map((question: any) => createQuestion(question))
+            const questionRes = await Promise.all(questionPromises)
+            const questionIds = questionRes.map((res: any) => res.data.id)
+            console.log('questionIds', questionIds)            
+            // const survey = {
+            //     title,
+            //     target,
+            //     backgroundImage,
+            //     questions: questionIds
+            // }
+            // const surveyRes = await createSurvey(survey)
+            // console.log('surveyRes', surveyRes)
+        }
+        create()
+        // create survey with question id
     };
     const onFailed = (errorInfo: any) => {
         console.log(errorInfo);
@@ -126,12 +187,13 @@ const CreateSurvey = () => {
                                             <Checkbox>Mandatory Question</Checkbox>
                                         </Form.Item>
                                         <Form.Item label="Answer Type" name={[field.name, 'type']}>
-                                            <Radio.Group onChange={(e) => setType(e.target.value)} defaultValue={type}>
-                                                <Radio value="input">Text</Radio>
-                                                <Radio value="option">Options</Radio>
+                                            <Radio.Group onChange={(e) => setType(e.target.value)}>
+                                                <Radio value="text">Text</Radio>
+                                                <Radio value="multipleChoice">Multiple Choice</Radio>
+                                                <Radio value="singleChoice">Single Choice</Radio>
                                             </Radio.Group>
                                         </Form.Item>
-                                        {type === 'option' ?
+                                        {type !== 'text' ?
                                             <Form.Item label="Options">
                                                 <Form.List name={[field.name, 'option']}>
                                                     {(subFields, subOpt) => (
@@ -177,13 +239,13 @@ const CreateSurvey = () => {
                             Cancel
                         </Button>
                         </div>
-                    {/* <Form.Item noStyle shouldUpdate>
+                    <Form.Item noStyle shouldUpdate>
                         {() => (
                             <Typography>
                                 <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
                             </Typography>
                         )}
-                    </Form.Item> */}
+                    </Form.Item>
                 </Form>
             </Modal >
         </>

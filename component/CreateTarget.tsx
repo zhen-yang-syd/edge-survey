@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Divider, Input, Select, Space, Button } from 'antd';
+import { Divider, Input, Select, Space, Button, message } from 'antd';
 import type { InputRef } from 'antd';
 import axios from 'axios';
 import { BASE_URL } from '@/utils';
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const CreateTarget: React.FC<Props> = ({ setTarget }) => {
-    const [items, setItems] = useState(['jack', 'lucy']);
+    const [items, setItems] = useState<any>([]);
     const [name, setName] = useState('');
     const inputRef = useRef<InputRef>(null);
     const [diabled, setDisabled] = useState(true)
@@ -25,10 +25,15 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
         console.log('name', name)
     }, [name])
 
-    const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    const addItem = async (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
         e.preventDefault();
         setItems([...items, name || `New item ${index++}`]);
         setName('');
+        // create a new item
+        const data = await axios.post(`${BASE_URL}/api/target`, { name })
+        if(data) {
+            message.success('Create target successfully')
+        }
         setTimeout(() => {
             inputRef.current?.focus();
         }, 0);
@@ -37,7 +42,9 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
         const getData = async () => {
             const res = await axios.get(`${BASE_URL}/api/target`)
             console.log('res', res.data.data)
-            setItems(res.data.data)
+            const data = res.data.data.map((item: any) => item.name)
+            setItems(data)
+            // setItems(res.data.data)
         }
         getData()
     }, [])
@@ -69,9 +76,8 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
                     </Space>
                 </>
             )}
-            options={items.map((item) => ({ label: item, value: item }))}
+            options={items.map((item: any) => ({ label: item, value: item }))}
             onChange={(value) => {
-                console.log(value);
                 setTarget(value);
             }}
         />

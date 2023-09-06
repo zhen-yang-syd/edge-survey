@@ -3,7 +3,7 @@ import { client } from "@/utils/client";
 import v4 from 'uuidv4'
 
 export async function GET(req: NextRequest) {
-    const query = `*[_type == "target"]`
+    const query = `*[_type == "question"]`
     const data = await client.fetch(query)
     return NextResponse.json({
         success: true,
@@ -13,11 +13,14 @@ export async function GET(req: NextRequest) {
     })
 }
 export async function POST(req: NextRequest) {
-    const target = await req.json()
-    const { name } = target
+    const questionObject = await req.json()
+    const { question, required, type, option } = questionObject
     const data = await client.create({
-        _type: 'target',
-        name: name,
+        _type: 'question',
+        title: question,
+        required: required,
+        type: type,
+        options: option,
         createdAt: new Date().toISOString(),
     })
     return NextResponse.json({
