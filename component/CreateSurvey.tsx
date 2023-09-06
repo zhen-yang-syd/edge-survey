@@ -14,7 +14,7 @@ import { v4 } from 'uuid';
 const antIcon = <LoadingOutlined style={{ fontSize: 12 }} spin rev={undefined} />;
 
 const CreateSurvey = () => {
-    
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -69,7 +69,7 @@ const CreateSurvey = () => {
         //     ]
         //   }
         // create each question, map the questions and create promise, then promise.all
-        const { title, target, backgroundImage, questions }: any = value
+        const { title, target, backgroundImage, questions, logo }: any = value
         const createQuestion = async (question: any) => {
             const res = await axios.post(`${BASE_URL}/api/question`, question)
             return res.data
@@ -87,7 +87,8 @@ const CreateSurvey = () => {
                 title,
                 target,
                 image: backgroundImage,
-                questions: questionIds
+                questions: questionIds,
+                logo: logo
             }
             const surveyRes = await createSurvey(survey)
             console.log('surveyRes', surveyRes)
@@ -101,13 +102,21 @@ const CreateSurvey = () => {
         console.log(errorInfo);
     }
     const [fileImageList, setFileImageList] = useState<UploadFile[]>([]);
+    const [fileLogoImageList, setFileLogoImageList] = useState<UploadFile[]>([]);
     const [uploadImage, setUploadImage] = useState<any>(null);
+    const [uploadLogoImage, setUploadLogoImage] = useState<any>(null);
     useEffect(() => {
         if (uploadImage) {
             form.setFieldsValue({ backgroundImage: uploadImage._id })
         }
     }
         , [uploadImage])
+    useEffect(() => {
+        if (uploadLogoImage) {
+            form.setFieldsValue({ logo: uploadLogoImage._id })
+        }
+    }
+        , [uploadLogoImage])
     const onChange: UploadProps['onChange'] = async (data) => {
         const { fileList: newFileList, file } = data
         setFileImageList(newFileList);
@@ -129,6 +138,31 @@ const CreateSurvey = () => {
         imgWindow?.document.write(image.outerHTML);
     };
     const dummyRequest = ({ file, onSuccess }: any) => {
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
+    };
+    const onLogoChange: UploadProps['onChange'] = async (data) => {
+        const { fileList: newFileList, file } = data
+        setFileLogoImageList(newFileList);
+        const uploadedImage = await client.assets.upload('image', file.originFileObj as RcFile);
+        setUploadLogoImage(uploadedImage)
+    };
+    const onLogoPreview = async (file: UploadFile) => {
+        let src = file.url as string;
+        if (!src) {
+            src = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file.originFileObj as RcFile);
+                reader.onload = () => resolve(reader.result as string);
+            });
+        };
+        const image = new Image()
+        image.src = src;
+        const imgWindow = window.open(src);
+        imgWindow?.document.write(image.outerHTML);
+    };
+    const dummyLogoRequest = ({ file, onSuccess }: any) => {
         setTimeout(() => {
             onSuccess("ok");
         }, 0);
@@ -170,6 +204,21 @@ const CreateSurvey = () => {
                                 customRequest={dummyRequest}
                             >
                                 {fileImageList.length < 1 && '+ Upload'}
+                            </Upload>
+                        </ImgCrop>
+                    </Form.Item>
+                    <Form.Item label="Logo" name='logo' rules={[{ required: true }]}>
+                        <ImgCrop>
+                            <Upload
+                                listType="picture-card"
+                                fileList={fileLogoImageList}
+                                onChange={onLogoChange}
+                                onPreview={onLogoPreview}
+                                maxCount={1}
+                                className="w-full h-full"
+                                customRequest={dummyLogoRequest}
+                            >
+                                {fileLogoImageList.length < 1 && '+ Upload'}
                             </Upload>
                         </ImgCrop>
                     </Form.Item>
@@ -248,13 +297,13 @@ const CreateSurvey = () => {
                             Cancel
                         </Button>
                     </div>
-                    {/* <Form.Item noStyle shouldUpdate>
+                    <Form.Item noStyle shouldUpdate>
                         {() => (
                             <Typography>
                                 <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
                             </Typography>
                         )}
-                    </Form.Item> */}
+                    </Form.Item>
                 </Form>
             </Modal >
         </>

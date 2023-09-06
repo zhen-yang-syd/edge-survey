@@ -8,10 +8,13 @@ import CreateSurvey from '@/component/CreateSurvey';
 import useSurveyStore from '@/store/surveyStore';
 import { useRouter } from 'next/navigation';
 import { Survey } from '@/type';
+import { LoadingOutlined } from '@ant-design/icons'
+import { Spin } from 'antd';
 async function getData() {
   const res = await axios.get(`${BASE_URL}/api/survey`)
   return res.data
 }
+const antIcon = <LoadingOutlined style={{ fontSize: 70 }} spin rev={undefined} />;
 // create a survey with background image and questions
 export default function Home() {
   const router = useRouter()
@@ -70,38 +73,39 @@ export default function Home() {
           <div className='absolute sm:top-5 sm:right-5 top-[70px] right-[100px]'><CreateSurvey /></div>
           <div className='w-full flex justify-center'>
             {
-              loading ? 'loading...' :
+              loading ? <Spin indicator={antIcon} /> :
                 <>
                   {survey && survey.length > 0 ?
                     <div className='w-full h-full flex flex-col gap-8 items-center'>
                       {
                         survey.map((item: Survey, index: number) =>
-                        (<div className='shadow-lg rounded-lg px-5 py-3 flex flex-row bg-black text-white bg-opacity-30 gap-10' key={index}>
-                          <picture>
-                            <img src={item.image.asset.url} alt="" className='w-[50px] h-[50px]' />
-                          </picture>
-                          {item.qrCode && <picture>
-                            <img src={item.qrCode?.asset.url || undefined} alt="" className='w-[50px] h-[50px]' />
-                          </picture>}
+                        (<div className='shadow-lg rounded-lg px-5 py-3 flex flex-row bg-black text-white bg-opacity-30 gap-2 sm:gap-10 cursor-pointer hover:shadow-2xl sm:hover:scale-[120%] transition-all duration-150 ease-in-out' key={index} >
+
+                          {item.qrCode ? <picture>
+                            <img src={item.qrCode?.asset.url || undefined} alt="" className='sm:w-[50px] sm:h-[50px] w-[40px] h-[40px]' />
+                          </picture> :
+                            <picture>
+                              <img src={item.logo?.asset.url || item.image.asset.url} alt="" className='sm:w-[50px] sm:h-[50px] w-[40px] h-[40px]' />
+                            </picture>}
                           <div className='flex flex-col justify-between text-center'>
-                            <div>Title</div>
-                            <div>{item.title}</div>
+                            <div className='font-semibold text-xs sm:text-base'>Title</div>
+                            <div className='text-gray-300 text-xs sm:text-sm'>{item.title}</div>
                           </div>
                           <div className='flex flex-col justify-between text-center'>
-                            <div>Target</div>
-                            <div>{item.target.name}</div>
+                            <div className='font-semibold text-xs sm:text-base'>Target</div>
+                            <div className='text-gray-300 text-xs sm:text-sm'>{item.target.name}</div>
                           </div>
                           <div className='flex flex-col justify-between text-center'>
-                            <div>Questions</div>
-                            <div>{item.questions.length}</div>
+                            <div className='font-semibold text-xs sm:text-base'>Questions</div>
+                            <div className='text-gray-300 text-xs sm:text-sm'>{item.questions.length}</div>
                           </div>
                           <div className='flex flex-col justify-between text-center'>
-                            <div>Created At</div>
-                            <div>{item.createdAt.slice(0, 10)}</div>
+                            <div className='font-semibold text-xs sm:text-base'>Created</div>
+                            <div className='text-gray-300 text-xs sm:text-sm'>{item.createdAt.slice(0, 10)}</div>
                           </div>
-                          <div className='flex flex-row gap-5 items-center'>
-                            <button onClick={() => router.push(`/survey/${item._id}`)}>Detail</button>
-                            <button disabled className='cursor-not-allowed'>Edit</button>
+                          <div className='flex flex-row gap-5 items-center justify-center'>
+                            <button className="text-sm hover:text-blue-300 transition-all duration-150 ease-in-out" onClick={() => router.push(`/detail/${item._id}`)}>Detail</button>
+                            <button className="text-sm hover:text-blue-300 transition-all duration-150 ease-in-out" onClick={() => router.push(`/survey/${item._id}`)}>Edit</button>
                           </div>
                         </div>)
                         )

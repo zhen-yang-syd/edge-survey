@@ -15,6 +15,11 @@ export interface Survey {
             url: string;
         }
     },
+    logo: {
+        asset: {
+            url: string;
+        }
+    },
     questions: Question[];
 }
 export interface Question {

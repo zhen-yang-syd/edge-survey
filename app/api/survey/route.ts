@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     const surveyObject = await req.json()
-    const { title, target, image, questions } = surveyObject
+    const { title, target, image, questions, logo } = surveyObject
     const data = await client.create({
         _type: 'survey',
         title: title,
@@ -53,10 +53,13 @@ export async function POST(req: NextRequest) {
                 _ref: image,
             }
         },
-        // questions: {
-        //     _type: 'array',
-        //     _ref: questions,
-        // },
+        logo: {
+            _type: 'image',
+            asset: {
+                _type: "reference",
+                _ref: logo,
+            }
+        },
         questions: questions,
         createdAt: new Date().toISOString(),
     })
