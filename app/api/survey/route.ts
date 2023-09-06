@@ -4,6 +4,28 @@ import { client } from "@/utils/client";
 export async function GET(req: NextRequest) {
     const query = `*[_type == "survey"] {
         _id,
+        title,
+        target->{
+            name,
+        },
+        image {
+            asset->{
+                url,
+            }
+        },
+        questions[]->{
+            title,
+            required,
+            type,
+            options[],
+        },
+        qrCode {
+            asset->{
+                url,
+            }
+        },
+        createdAt,
+
     }`
     const data = await client.fetch(query)
     return NextResponse.json({
