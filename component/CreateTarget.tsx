@@ -51,7 +51,6 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
 
     return (
         <Select
-            style={{ width: 300 }}
             placeholder="Select target"
             dropdownRender={(menu) => (
                 <>

@@ -70,17 +70,14 @@ const CreateSurvey = () => {
         }
     }
         , [target])
-    const [type, setType] = useState<string>('option')
+    const [type, setType] = useState<string>()
     return (
         <>
             <Button onClick={showModal} className='text-white'>Create a New One</Button>
             <Modal title="" closable={false} footer={null} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true}>
                 <Form
-                    labelCol={{ span: 6 }}
-                    wrapperCol={{ span: 18 }}
                     form={form}
                     name="dynamic_form_complex"
-                    style={{ maxWidth: 600 }}
                     autoComplete="off"
                     onFinish={onFinish}
                     onFinishFailed={onFailed}
@@ -106,7 +103,7 @@ const CreateSurvey = () => {
                             </Upload>
                         </ImgCrop>
                     </Form.Item>
-                    <Form.List name="questions">
+                    <Form.List name="questions" >
                         {(fields, { add, remove }) => (
                             <div style={{ display: 'flex', rowGap: 16, flexDirection: 'column' }}>
                                 {fields.map((field) => (
@@ -125,8 +122,8 @@ const CreateSurvey = () => {
                                         <Form.Item label="Question" name={[field.name, 'question']}>
                                             <Input />
                                         </Form.Item>
-                                        <Form.Item label="Required" name={[field.name, 'required']}>
-                                            <Checkbox>Required</Checkbox>
+                                        <Form.Item label="Required" name={[field.name, 'required']} valuePropName="checked">
+                                            <Checkbox>Mandatory Question</Checkbox>
                                         </Form.Item>
                                         <Form.Item label="Answer Type" name={[field.name, 'type']}>
                                             <Radio.Group onChange={(e) => setType(e.target.value)} defaultValue={type}>
@@ -170,21 +167,23 @@ const CreateSurvey = () => {
                             </div>
                         )}
                     </Form.List>
-                    <div className='w-full flex flex-row items-center justify-between'>
-                        <Button htmlType="submit" block>
+                    <div className='h-10 block w-full text-white'>1</div>
+                        <div className='w-full flex flex-row justify-center gap-5'>
+                        <Button htmlType="submit">
                             Submit
                         </Button>
-                        <Button block>
+                        <div className='text-white w-20'>1</div>
+                        <Button>
                             Cancel
                         </Button>
-                    </div>
-                    <Form.Item noStyle shouldUpdate>
+                        </div>
+                    {/* <Form.Item noStyle shouldUpdate>
                         {() => (
                             <Typography>
                                 <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
                             </Typography>
                         )}
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             </Modal >
         </>
