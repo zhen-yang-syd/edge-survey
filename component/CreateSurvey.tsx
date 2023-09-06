@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Modal, Button, Card, Form, Input, Space, Typography, ConfigProvider, Upload } from 'antd'
+import { Modal, Button, Card, Form, Input, Space, Typography, ConfigProvider, Upload, Checkbox } from 'antd'
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
@@ -27,6 +27,9 @@ const CreateSurvey = () => {
     const onFinish = (value: object) => {
         console.log(value);
     };
+    const onFailed = (errorInfo: any) => {
+        console.log(errorInfo);
+    }
     const [fileImageList, setFileImageList] = useState<UploadFile[]>([]);
     const [uploadImage, setUploadImage] = useState<any>(null);
     useEffect(() => {
@@ -79,14 +82,15 @@ const CreateSurvey = () => {
                     style={{ maxWidth: 600 }}
                     autoComplete="off"
                     onFinish={onFinish}
+                    onFinishFailed={onFailed}
                 >
-                    <Form.Item label="Title" name="title">
+                    <Form.Item label="Title" name="title" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Target" name="target">
+                    <Form.Item label="Target" name="target" rules={[{ required: true }]}>
                         <CreateTarget setTarget={setTarget} />
                     </Form.Item>
-                    <Form.Item label="Background Image" name='backgroundImage'>
+                    <Form.Item label="Background Image" name='backgroundImage' rules={[{ required: true }]}>
                         <ImgCrop>
                             <Upload
                                 listType="picture-card"
@@ -107,7 +111,7 @@ const CreateSurvey = () => {
                                 {fields.map((field) => (
                                     <Card
                                         size="small"
-                                        title={`Item ${field.name + 1}`}
+                                        title={`Question ${field.name + 1}`}
                                         key={field.key}
                                         extra={
                                             <CloseOutlined
@@ -129,6 +133,9 @@ const CreateSurvey = () => {
                                                             <Space key={subField.key}>
                                                                 <Form.Item noStyle name={[subField.name]}>
                                                                     <Input placeholder="option" />
+                                                                </Form.Item>
+                                                                <Form.Item noStyle name={[subField.name]}>
+                                                                    <Checkbox>Mandatory</Checkbox>
                                                                 </Form.Item>
                                                                 <CloseOutlined
                                                                     onClick={() => {
@@ -153,7 +160,7 @@ const CreateSurvey = () => {
                             </div>
                         )}
                     </Form.List>
-                    <Button type="primary" htmlType="submit">
+                    <Button htmlType="submit">
                         Submit
                     </Button>
                     <Button>

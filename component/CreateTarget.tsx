@@ -10,15 +10,12 @@ let index = 0;
 interface Props {
     setTarget: (value: string) => void
 }
-async function getData() {
-    const res = await axios.get(`${BASE_URL}/api/target`)
-    return res.data
-  }
 
 const CreateTarget: React.FC<Props> = ({ setTarget }) => {
     const [items, setItems] = useState(['jack', 'lucy']);
     const [name, setName] = useState('');
     const inputRef = useRef<InputRef>(null);
+    const [diabled, setDisabled] = useState(true)
 
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -36,11 +33,26 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
             inputRef.current?.focus();
         }, 0);
     };
+    useEffect(() => {
+        const getData = async () => {
+            const res = await axios.get(`${BASE_URL}/api/target`)
+            console.log('res', res.data.data)
+            setItems(res.data.data)
+        }
+        getData()
+    }, [])
+    useEffect(() => {
+        if (name) {
+            setDisabled(false)
+        } else {
+            setDisabled(true)
+        }
+    }, [name])
 
     return (
         <Select
             style={{ width: 300 }}
-            placeholder="custom dropdown render"
+            placeholder="Select target"
             dropdownRender={(menu) => (
                 <>
                     {menu}
@@ -52,8 +64,8 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
                             value={name}
                             onChange={onNameChange}
                         />
-                        <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                            Add item
+                        <Button type="text" icon={<PlusOutlined />} onClick={addItem} disabled={diabled}>
+                            Add target
                         </Button>
                     </Space>
                 </>
