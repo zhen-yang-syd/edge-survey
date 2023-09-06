@@ -7,8 +7,8 @@ export async function GET(req: NextRequest) {
         phone,
         email,
         major,
-        experience,
         preferActivities[],
+        experience,
     }`
     const data = await client.fetch(query)
     return NextResponse.json({

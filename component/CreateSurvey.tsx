@@ -1,13 +1,16 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Modal, Button, Card, Form, Input, Space, Typography, ConfigProvider, Upload, Checkbox, Radio } from 'antd'
-import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { Modal, Button, Card, Form, Input, Space, Typography, Upload, Checkbox, Radio, Spin, message } from 'antd'
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { client } from '@/utils/client';
 import CreateTarget from './CreateTarget';
 import axios from 'axios';
 import { BASE_URL } from '@/utils';
+import { v4 } from 'uuid';
+
+const antIcon = <LoadingOutlined style={{ fontSize: 12 }} spin rev={undefined} />;
 
 const CreateSurvey = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,7 +29,9 @@ const CreateSurvey = () => {
         setFileImageList([]);
     };
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState<boolean>(false)
     const onFinish = (value: object) => {
+        setLoading(true)
         console.log(value);
         // create question and survey
         // {
@@ -74,19 +79,21 @@ const CreateSurvey = () => {
         const create = async () => {
             const questionPromises = questions.map((question: any) => createQuestion(question))
             const questionRes = await Promise.all(questionPromises)
-            const questionIds = questionRes.map((res: any) => res.data._id)
-            console.log('questionIds', questionIds)    
+            const questionIds = questionRes.map((res: any) => ({ _key: v4(), _type: 'reference', _ref: res.data._id })) // { _type: 'reference', _ref: id }
+            console.log('questionIds', questionIds)
             const survey = {
                 title,
                 target,
-                backgroundImage,
+                image: backgroundImage,
                 questions: questionIds
             }
-            // const surveyRes = await createSurvey(survey)
-            // console.log('surveyRes', surveyRes)
+            const surveyRes = await createSurvey(survey)
+            console.log('surveyRes', surveyRes)
+            message.success('Create survey successfully')
+            setLoading(false)
+            handleCancel()
         }
         create()
-        // create survey with question id
     };
     const onFailed = (errorInfo: any) => {
         console.log(errorInfo);
@@ -95,7 +102,7 @@ const CreateSurvey = () => {
     const [uploadImage, setUploadImage] = useState<any>(null);
     useEffect(() => {
         if (uploadImage) {
-            form.setFieldsValue({ backgroundImage: uploadImage.url })
+            form.setFieldsValue({ backgroundImage: uploadImage._id })
         }
     }
         , [uploadImage])
@@ -135,7 +142,7 @@ const CreateSurvey = () => {
     return (
         <>
             <Button onClick={showModal} className='text-white'>Create a New One</Button>
-            <Modal title="" closable={false} footer={null} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true}>
+            <Modal title="" closable={false} footer={null} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true} centered maskClosable={false}>
                 <Form
                     form={form}
                     name="dynamic_form_complex"
@@ -230,22 +237,22 @@ const CreateSurvey = () => {
                         )}
                     </Form.List>
                     <div className='h-10 block w-full text-white'>1</div>
-                        <div className='w-full flex flex-row justify-center gap-5'>
-                        <Button htmlType="submit">
-                            Submit
+                    <div className='w-full flex flex-row justify-center gap-5'>
+                        <Button htmlType="submit" disabled={loading} style={{ width: '80px' }}>
+                            {loading ? <Spin indicator={antIcon} /> : 'Submit'}
                         </Button>
                         <div className='text-white w-20'>1</div>
-                        <Button>
+                        <Button onClick={handleCancel}>
                             Cancel
                         </Button>
-                        </div>
-                    <Form.Item noStyle shouldUpdate>
+                    </div>
+                    {/* <Form.Item noStyle shouldUpdate>
                         {() => (
                             <Typography>
                                 <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
                             </Typography>
                         )}
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             </Modal >
         </>

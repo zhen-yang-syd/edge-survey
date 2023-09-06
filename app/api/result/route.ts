@@ -9,10 +9,10 @@ export async function GET(req: NextRequest) {
             phoneNumber,
             email,
         },
+        createdAt,
         edgeGroup,
         edgeExperience,
         edgeInterested,
-        createdAt,
     }`
     const data = await client.fetch(query)
     let list:any = []
