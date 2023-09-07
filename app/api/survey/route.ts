@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     const surveyObject = await req.json()
-    const { title, target, image, questions, logo } = surveyObject
+    const { title, target, image, questions, logo, qrCode } = surveyObject
     const data = await client.create({
         _type: 'survey',
         title: title,
@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
                 _ref: image,
             }
         },
+        qrCode: null,
         logo: {
             _type: 'image',
             asset: {

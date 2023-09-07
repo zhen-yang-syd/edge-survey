@@ -108,6 +108,7 @@ const CreateSurvey = () => {
                         url: uploadImage.url
                     }
                 },
+                qrCode: null,
                 createdAt: surveyRes.data.createdAt,
                 questions: questions.map((question: any, index: number) => ({ ...question, title: question.question, options: question.option }))
             }
