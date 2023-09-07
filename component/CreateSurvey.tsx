@@ -29,6 +29,7 @@ const CreateSurvey = () => {
         setIsModalOpen(false);
         form.resetFields();
         setFileImageList([]);
+        setFileLogoImageList([]);
     };
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false)

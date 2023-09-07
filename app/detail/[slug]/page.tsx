@@ -6,7 +6,7 @@ import { BASE_URL, sendVerificationCode } from '@/utils'
 import useSurveyStore from '@/store/surveyStore'
 import { Survey } from '@/type'
 import { BiLeftArrowAlt } from 'react-icons/bi'
-import { Form, Input, Button, Spin, message, ConfigProvider } from 'antd'
+import { Form, Input, Button, Spin, message, ConfigProvider, Checkbox, Radio } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin rev={undefined} />;
@@ -226,6 +226,49 @@ export default function Page({ params }: { params: { slug: string } }) {
                   />
                 </Form.Item>
               </div>
+              {/* map all the questions */}
+              <>
+                {
+                  item.questions.map((question, index) => {
+                    return (
+                      <div className='ml-2' key={index}>
+                        <div className='shadow-text uppercase'>
+                          <span>{question.title}</span>
+                        </div>
+                        <Form.Item name={`${question.title}`} rules={[{ required: question.required === true ? true : false, message: question.type === 'text' ? 'Please input!' : 'Please select!' }]}>
+                          {
+                            question.type === 'text' ? <Input /> : 
+                            question.type === 'multipleChoice' ? <Radio.Group>
+                              {question?.options?.map((option, index) => (
+                                <Radio key={index} value={option} className='text-white'>
+                                  {option}
+                                  <>{option === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
+                                </Radio>
+                              ))}
+                            </Radio.Group> :
+                            <Checkbox.Group>
+                              {question?.options?.map((option, index) => (
+                                <Checkbox key={index} value={option} className='text-white'>
+                                  {option}
+                                  <>{option === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
+                                </Checkbox>
+                              ))}
+                            </Checkbox.Group>
+                          }
+                          {/* <Radio.Group onChange={onChangeMajor} value={selectedMajor}>
+                            {major.map((item, index) => (
+                              <Radio key={index} value={item.value} className='text-white'>
+                                {item.title}
+                                <>{selectedMajor === 'other' && item.value === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} onChange={(e) => setInputMajor(e.target.value)} /> : null}</>
+                              </Radio>
+                            ))}
+                          </Radio.Group> */}
+                        </Form.Item>
+                      </div>
+                    )
+                  })
+                }
+              </>
               {/* <div className='ml-2'>
               <div className='shadow-text'>
                 <span>Major:</span>

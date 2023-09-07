@@ -4,10 +4,13 @@ import { client } from "@/utils/client";
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     let username = searchParams.get('username')
+    let surveyId = searchParams.get('surveyId')
     if (username?.length === 9) {
         username = `0${username}`
     }
-    const query = `*[_type == "bcrLanding"]{phone}`;
+    const query = `*[_type == "result" && survey._ref == ${surveyId}]{
+        phone
+    }`;
     const res = await client.fetch(query);
     const isContained = res.some(
         (obj: { [s: string]: unknown } | ArrayLike<unknown>) =>
