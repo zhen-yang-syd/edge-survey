@@ -69,7 +69,7 @@ export default function Page({ params }: { params: { slug: string } }) {
       const { data } = await axios.post(`${BASE_URL}/api/result`, user)
       if(data.success) {
         message.success(data.message)
-        router.push('/')
+        router.push('/success')
       }
     }
   }
