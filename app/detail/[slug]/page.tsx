@@ -8,6 +8,8 @@ import { Survey } from '@/type'
 import { BiLeftArrowAlt } from 'react-icons/bi'
 import { Form, Input, Button, Spin, message, ConfigProvider, Checkbox, Radio } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
+import { useDebounce } from 'react-use';
+import { v4 } from 'uuid'
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin rev={undefined} />;
 const antIcon1 = <LoadingOutlined style={{ fontSize: 12 }} spin rev={undefined} />;
@@ -21,8 +23,55 @@ export default function Page({ params }: { params: { slug: string } }) {
     const result = survey.find((item: Survey) => item._id === params.slug)
     setItem(result)
   }, [params.slug])
-  const onFinish = (values: any) => {
-    console.log(values)
+  const onFinish = async (values: any) => {
+    // divided the values into two parts: user and survey
+    const user = {
+      survey: {
+        _key: params.slug,
+        _ref: params.slug,
+        _type: 'reference'
+      },
+      username: values.name,
+      email: values.email,
+      phone: values.username,
+      resultList: [] as {
+        _ref: string,
+        _type: 'reference'
+      }[]
+    }
+    const rest = Object.keys(values).reduce((object: any, key: any) => {
+      if (key !== 'name' && key !== 'email' && key !== 'username' && key !== 'verificationCode') {
+        if(typeof values[key] === 'string') {
+          values[key] = [values[key]]
+        }
+        object[key] = values[key];
+      }
+      return object;
+    }, {});
+    // create pair of each item in rest array, with promise.all
+    // get the id and add to the user object with resultList key
+    const pair = Object.entries(rest).map(async ([key, value]) => {
+      return await axios.post(`${BASE_URL}/api/pair`, {
+        question: key,
+        answer: value
+      })
+    })
+    const result = await Promise.all(pair)
+    user['resultList'] = result.map(item=>(
+      {
+        _ref: item.data.data._id,
+        _type: 'reference',
+        _key: v4()
+      }
+    ))
+    // create result
+    if (result) {
+      const { data } = await axios.post(`${BASE_URL}/api/result`, user)
+      if(data.success) {
+        message.success(data.message)
+        router.push('/')
+      }
+    }
   }
   const onFinishFailed = (errorInfo: any) => {
     console.log(errorInfo)
@@ -58,6 +107,29 @@ export default function Page({ params }: { params: { slug: string } }) {
         , 1000);
     }
   }
+  const [, cancel] = useDebounce(
+    () => {
+      setIsUsernameAvailable(null);
+      // call api to check username avaliability
+      const checkUsername = async () => {
+        try {
+          // check phone number has been registered or not
+          const { data } = await axios.get(`${BASE_URL}/api/auth/check/username?username=${username}&surveyId=${params.slug}`)
+          if (data.data.available === true) {
+            setIsUsernameAvailable(true);
+          } else {
+            setIsUsernameAvailable(false);
+          }
+        }
+        catch (err) {
+          console.log(err)
+        }
+      }
+      username !== '' && usernameFormat === true && checkUsername();
+    },
+    500,
+    [username]
+  );
   return (
     <ConfigProvider
       theme={
@@ -156,7 +228,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 </div>
               </div>
               {/* Phone */}
-              <div className='ml-2 flex flex-col gap-2'>
+              <div className='ml-2 flex flex-col gap-2 mb-2'>
                 <div className='shadow-text'>
                   <span>Phone</span>
                 </div>
@@ -200,7 +272,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 </div>
               </div>
               {/* verification code */}
-              <div className='ml-2 flex flex-col gap-2'>
+              <div className='ml-2 flex flex-col gap-2 mb-2'>
                 <div className='shadow-text'>Verification Code</div>
                 <Form.Item
                   name="verificationCode"
@@ -237,87 +309,30 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </div>
                         <Form.Item name={`${question.title}`} rules={[{ required: question.required === true ? true : false, message: question.type === 'text' ? 'Please input!' : 'Please select!' }]}>
                           {
-                            question.type === 'text' ? <Input /> : 
-                            question.type === 'multipleChoice' ? <Radio.Group>
-                              {question?.options?.map((option, index) => (
-                                <Radio key={index} value={option} className='text-white'>
-                                  {option}
-                                  <>{option === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
-                                </Radio>
-                              ))}
-                            </Radio.Group> :
-                            <Checkbox.Group>
-                              {question?.options?.map((option, index) => (
-                                <Checkbox key={index} value={option} className='text-white'>
-                                  {option}
-                                  <>{option === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
-                                </Checkbox>
-                              ))}
-                            </Checkbox.Group>
+                            question.type === 'text' ? <Input /> :
+                              question.type === 'multipleChoice' ? <Radio.Group>
+                                {question?.options?.map((option, index) => (
+                                  <Radio key={index} value={option} className='text-white'>
+                                    {option}
+                                    <>{option === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
+                                  </Radio>
+                                ))}
+                              </Radio.Group> :
+                                <Checkbox.Group>
+                                  {question?.options?.map((option, index) => (
+                                    <Checkbox key={index} value={option} className='text-white'>
+                                      {option}
+                                      <>{option === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
+                                    </Checkbox>
+                                  ))}
+                                </Checkbox.Group>
                           }
-                          {/* <Radio.Group onChange={onChangeMajor} value={selectedMajor}>
-                            {major.map((item, index) => (
-                              <Radio key={index} value={item.value} className='text-white'>
-                                {item.title}
-                                <>{selectedMajor === 'other' && item.value === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} onChange={(e) => setInputMajor(e.target.value)} /> : null}</>
-                              </Radio>
-                            ))}
-                          </Radio.Group> */}
                         </Form.Item>
                       </div>
                     )
                   })
                 }
               </>
-              {/* <div className='ml-2'>
-              <div className='shadow-text'>
-                <span>Major:</span>
-              </div>
-              <Form.Item name='major' required className='' rules={[{ required: true, message: 'Please select!' }]}>
-                <Radio.Group onChange={onChangeMajor} value={selectedMajor}>
-                  {major.map((item, index) => (
-                    <Radio key={index} value={item.value} className='text-white'>
-                      {item.title}
-                      <>{selectedMajor === 'other' && item.value === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} onChange={(e) => setInputMajor(e.target.value)} /> : null}</>
-                    </Radio>
-                  ))}
-                </Radio.Group>
-              </Form.Item>
-            </div>
-            <div className='ml-2'>
-              <div className='shadow-text'>
-                <span>Do you have investment experience?</span>
-              </div>
-              <Form.Item name='experience' required className='' rules={[{ required: true, message: 'Please select!' }]}>
-                <Radio.Group onChange={onChangeHaveExperience} value={haveExperience}>
-                  <Radio value={true} className='text-white'>
-                    Yes
-                  </Radio>
-                  <Radio value={false} className='text-white'>
-                    No
-                  </Radio>
-                  {haveExperience ? (
-                    <Form.Item name='experienceDetail' required className='' rules={[{ required: true, message: 'Please input!' }]}>
-                      <Radio.Group onChange={onChangeExperience} value={selectedExperience}>
-                        {experience.map((item, index) => (
-                          <Radio key={index} value={item.value} className='text-white'>
-                            {item.title}<>{selectedExperience === 'other' && item.value === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} onChange={(e) => setInputExperience(e.target.value)} /> : null}</>
-                          </Radio>
-                        ))}
-                      </Radio.Group>
-                    </Form.Item>
-                  ) : null}
-                </Radio.Group>
-              </Form.Item>
-            </div>
-            <div className='ml-2'>
-              <div className='shadow-text'>
-                <span>Which types of offline activities would you like to participate in?</span>
-              </div>
-              <Form.Item name='activities' required className='' rules={[{ required: true, message: 'Please select!' }]}>
-                <Checkbox.Group options={preferActivities} onChange={onChangeActivities} className='text-white' />
-              </Form.Item>
-            </div> */}
               <Form.Item className='flex justify-center'>
                 <Button
                   htmlType="submit"

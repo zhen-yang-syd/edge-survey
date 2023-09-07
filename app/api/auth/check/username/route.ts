@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     if (username?.length === 9) {
         username = `0${username}`
     }
-    const query = `*[_type == "result" && survey._ref == ${surveyId}]{
+    const query = `*[_type == "result" && survey._ref == "${surveyId}"]{
         phone
     }`;
     const res = await client.fetch(query);
