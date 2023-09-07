@@ -109,7 +109,7 @@ export default function Home() {
                             <div className='text-gray-300 text-xs sm:text-sm'>{item.createdAt.slice(0, 10)}</div>
                           </div>
                           <div className='flex flex-row gap-5 items-center justify-center'>
-                            <button className="text-sm hover:text-blue-300 transition-all duration-150 ease-in-out" onClick={() => router.push(`/detail/${item._id}`)}>Detail</button>
+                            <button className="text-sm hover:text-blue-300 transition-all duration-150 ease-in-out" onClick={() => router.push(`/detail/${item._id}`)}>Preview</button>
                             <button className="text-sm hover:text-blue-300 transition-all duration-150 ease-in-out" onClick={() => router.push(`/survey/${item._id}`)}>Edit</button>
                           </div>
                         </div>)

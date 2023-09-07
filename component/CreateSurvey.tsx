@@ -94,8 +94,8 @@ const CreateSurvey = () => {
             console.log('currentSurvey', surveyRes)
             console.log(uploadImage, uploadLogoImage)
             const newSurvey = {
-                _id: surveyRes.data._id,
-                title: surveyRes.data.title,
+                _id: surveyRes.data._id as string,
+                title: surveyRes.data.title as string,
                 target: { name: targetName },
                 logo: {
                     asset: {

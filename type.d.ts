@@ -10,11 +10,11 @@ export interface Survey {
             url: string;
         }
     },
-    qrCode? : {
+    qrCode: {
         asset: {
             url: string;
         }
-    },
+    } | null,
     logo: {
         asset: {
             url: string;
@@ -26,5 +26,5 @@ export interface Question {
     title: string;
     required: boolean;
     type: string;
-    options: string[];
+    options: string[] | null;
 }
