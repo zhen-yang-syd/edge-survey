@@ -6,11 +6,15 @@ import { BASE_URL } from '@/utils'
 import useSurveyStore from '@/store/surveyStore'
 import { Survey } from '@/type'
 import { BiLeftArrowAlt } from 'react-icons/bi'
-import { Button } from 'antd'
+import { Button, Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
+
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin rev={undefined} />;
 
 export default function Page({ params }: { params: { slug: string } }) {
   const router = useRouter()
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false)
   const { survey, updateSurvey } = useSurveyStore()
   const [item, setItem] = useState<Survey>()
   useEffect(() => {
@@ -18,12 +22,11 @@ export default function Page({ params }: { params: { slug: string } }) {
     const result = survey.find((item: Survey) => item._id === params.slug)
     console.log(result)
     setItem(result)
+    setLoading(false)
   }, [params.slug])
-  const [qrCodeUrl, setQRCodeUrl] = useState<string>('')
   const generateQRCode = async () => {
+    setButtonLoading(true)
     const { data } = await axios.post(`${BASE_URL}/api/qrcode`, { surveyId: params.slug, imageUrl: item?.image.asset.url })
-    console.log(data.data.png)
-    setQRCodeUrl(data.data.png)
     // update the survey with qrcode in survey store
     const result = survey.map((item: Survey) => {
       if (item._id === params.slug) {
@@ -38,6 +41,9 @@ export default function Page({ params }: { params: { slug: string } }) {
       return item
     })
     updateSurvey(result)
+    setButtonLoading(false)
+    // update the survey with qrcode in database
+
   }
   return (
     <>
@@ -47,8 +53,8 @@ export default function Page({ params }: { params: { slug: string } }) {
             <BiLeftArrowAlt className="absolute top-5 sm:top-4 left-5 text-2xl sm:text-3xl cursor-pointer hover:text-blue-400 transition-all ease-in-out duration-150" onClick={() => router.push('/')} />
             <h1 className='text-center font-bold'>{item.title} <span className='text-gray-300 font-normal'>{item.createdAt.slice(0, 10)}</span></h1>
             <div className='flex flex-col gap-5 w-full justify-center items-center mt-10'>
-              {qrCodeUrl && <img src={qrCodeUrl} alt="" className='w-[200px]'/>}
-              <Button onClick={() => generateQRCode()} className='text-white'>Generate QR Code</Button>
+              {item.qrCode && <img src={item.qrCode.asset.url} alt="" className='w-[200px]' />}
+              <Button onClick={() => generateQRCode()} className='text-white w-[153px] flex justify-center items-center' disabled={buttonLoading}>{buttonLoading ? <Spin indicator={antIcon} /> : 'Generate QR Code'}</Button>
             </div>
           </div>
         </div> : 'loading...'
