@@ -208,7 +208,7 @@ const CreateSurvey = () => {
                     onFinishFailed={onFailed}
                 >
                     <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-                        <Input />
+                        <Input className='text-black'/>
                     </Form.Item>
                     <Form.Item label="Target" name="target" rules={[{ required: true }]}>
                         <CreateTarget setTarget={setTarget} setTargetName={setTargetName}/>
@@ -260,7 +260,7 @@ const CreateSurvey = () => {
                                         }
                                     >
                                         <Form.Item label="Question" name={[field.name, 'question']}>
-                                            <Input />
+                                            <Input className='text-black'/>
                                         </Form.Item>
                                         <Form.Item label="Required" name={[field.name, 'required']} valuePropName="checked">
                                             <Checkbox>Mandatory Question</Checkbox>
@@ -280,7 +280,7 @@ const CreateSurvey = () => {
                                                             {subFields.map((subField) => (
                                                                 <Space key={subField.key}>
                                                                     <Form.Item noStyle name={[subField.name]}>
-                                                                        <Input placeholder="option" />
+                                                                        <Input placeholder="option" className='text-black' />
                                                                     </Form.Item>
                                                                     {/* <Checkbox onChange={() => form.setFieldValue("a", "b")} /> */}
                                                                     <CloseOutlined

@@ -75,6 +75,7 @@ const CreateTarget: React.FC<Props> = ({ setTarget, setTargetName }) => {
                                 ref={inputRef}
                                 value={name}
                                 onChange={onNameChange}
+                                className='text-black'
                             />
                             <Button type="text" icon={<PlusOutlined />} onClick={addItem} disabled={diabled}>
                                 Add target

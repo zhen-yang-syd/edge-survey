@@ -24,6 +24,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     setItem(result)
   }, [params.slug])
   const onFinish = async (values: any) => {
+    setLoading(true)
     // divided the values into two parts: user and survey
     const user = {
       survey: {
@@ -71,6 +72,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         message.success(data.message)
         router.push('/success')
       }
+      setLoading(false)
     }
   }
   const onFinishFailed = (errorInfo: any) => {
