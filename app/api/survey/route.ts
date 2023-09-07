@@ -25,7 +25,11 @@ export async function GET(req: NextRequest) {
             }
         },
         createdAt,
-
+        logo {
+            asset->{
+                url,
+            }
+        }
     }`
     const data = await client.fetch(query)
     return NextResponse.json({

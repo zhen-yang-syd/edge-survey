@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { Survey } from '@/type';
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd';
+import Cookie from 'js-cookie';
+
 async function getData() {
   const res = await axios.get(`${BASE_URL}/api/survey`)
   return res.data
@@ -19,20 +21,23 @@ const antIcon = <LoadingOutlined style={{ fontSize: 70 }} spin rev={undefined} /
 export default function Home() {
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(true)
-  const [data, setData] = useState<any>([])
   const { survey, updateSurvey } = useSurveyStore()
   useEffect(() => {
-    getData().then((res) => {
-      console.log('res', res.data)
-      setData(res.data)
-      setLoading(false)
-    })
-  }, [])
-  useEffect(() => {
-    if (data) {
-      updateSurvey(data)
+    const result = Cookie.get('getSurvey')
+    console.log('result', result)
+    if (!result) {
+      getData().then((res) => {
+        console.log('res', res.data)
+        // expires 10 mins
+        Cookie.set('getSurvey', 'true', { expires: 1 })
+        updateSurvey(res.data)
+        setLoading(false)
+      })
     }
-  }, [data])
+    else {
+      setLoading(false)
+    }
+  }, [])
   console.log(survey)
 
   return (

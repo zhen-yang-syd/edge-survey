@@ -9,12 +9,12 @@ import CreateTarget from './CreateTarget';
 import axios from 'axios';
 import { BASE_URL } from '@/utils';
 import { v4 } from 'uuid';
-
+import useSurveyStore from '@/store/surveyStore';
 
 const antIcon = <LoadingOutlined style={{ fontSize: 12 }} spin rev={undefined} />;
 
 const CreateSurvey = () => {
-
+    const { survey , updateSurvey } = useSurveyStore()
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -83,15 +83,34 @@ const CreateSurvey = () => {
             const questionRes = await Promise.all(questionPromises)
             const questionIds = questionRes.map((res: any) => ({ _key: v4(), _type: 'reference', _ref: res.data._id })) // { _type: 'reference', _ref: id }
             console.log('questionIds', questionIds)
-            const survey = {
+            const currentSurvey = {
                 title,
                 target,
                 image: backgroundImage,
                 questions: questionIds,
                 logo: logo
             }
-            const surveyRes = await createSurvey(survey)
-            console.log('surveyRes', surveyRes)
+            const surveyRes = await createSurvey(currentSurvey)
+            console.log('currentSurvey', surveyRes)
+            console.log(uploadImage, uploadLogoImage)
+            const newSurvey = {
+                _id: surveyRes.data._id,
+                title: surveyRes.data.title,
+                target: { name: targetName },
+                logo: {
+                    asset: {
+                        url: uploadLogoImage.url
+                    }
+                },
+                image: {
+                    asset: {
+                        url: uploadImage.url
+                    }
+                },
+                createdAt: surveyRes.data.createdAt,
+                questions: questions.map((question: any, index: number) => ({ ...question, title: question.question, options: question.option }))
+            }
+            updateSurvey([...survey, newSurvey])
             message.success('Create survey successfully')
             setLoading(false)
             handleCancel()
@@ -168,6 +187,7 @@ const CreateSurvey = () => {
         }, 0);
     };
     const [target, setTarget] = useState<string>('')
+    const [targetName, setTargetName] = useState<string>('')
     useEffect(() => {
         if (target) {
             form.setFieldsValue({ target: target })
@@ -190,7 +210,7 @@ const CreateSurvey = () => {
                         <Input />
                     </Form.Item>
                     <Form.Item label="Target" name="target" rules={[{ required: true }]}>
-                        <CreateTarget setTarget={setTarget} />
+                        <CreateTarget setTarget={setTarget} setTargetName={setTargetName}/>
                     </Form.Item>
                     <Form.Item label="Background Image" name='backgroundImage' rules={[{ required: true }]}>
                         <ImgCrop>

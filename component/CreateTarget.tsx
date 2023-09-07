@@ -8,10 +8,11 @@ import { BASE_URL } from '@/utils';
 
 let index = 0;
 interface Props {
-    setTarget: (value: string) => void
+    setTarget: (value: string) => void,
+    setTargetName: (value: string) => void
 }
 
-const CreateTarget: React.FC<Props> = ({ setTarget }) => {
+const CreateTarget: React.FC<Props> = ({ setTarget, setTargetName }) => {
     const [items, setItems] = useState<any>([]);
     const [name, setName] = useState('');
     const inputRef = useRef<InputRef>(null);
@@ -36,6 +37,7 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
             message.success('Create target successfully')
             setItems([...items, { value: data.data.data._id, label: data.data.data.name }]);
             setTarget(data.data.data._id)
+            setTargetName(data.data.data.name)
             setLoading(false)
         }
         setTimeout(() => {
@@ -82,8 +84,15 @@ const CreateTarget: React.FC<Props> = ({ setTarget }) => {
                 </>
             )}
             options={items.map((item: any) => ({ label: item.label, value: item.value }))}
-            onChange={(value) => {
-                setTarget(value);
+            // onChange={(option,value) => {
+            //     console.log('option', option)
+            //     setTarget(option.value);
+            //     setTargetName(option.label)
+            // }}
+            onSelect={(value, option) => {
+                // console.log('option', option.value)
+                setTarget(option.value || value);
+                setTargetName(option.label || value)
             }}
         />
     );
