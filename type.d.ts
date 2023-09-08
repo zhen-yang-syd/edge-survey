@@ -10,11 +10,7 @@ export interface Survey {
             url: string;
         }
     },
-    qrCode: {
-        asset: {
-            url: string;
-        }
-    } | null,
+    qrCode: string | null,
     logo: {
         asset: {
             url: string;

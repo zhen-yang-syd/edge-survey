@@ -80,7 +80,7 @@ export default function Home() {
                         (<div className='shadow-lg rounded-lg px-2 sm:px-5 py-3 flex flex-col sm:flex-row bg-black text-white bg-opacity-30 gap-2 sm:gap-10 cursor-pointer hover:shadow-2xl sm:hover:scale-[120%] transition-all duration-150 ease-in-out' key={index} >
 
                           {item.qrCode ? <picture>
-                            <img src={item.qrCode?.asset.url || undefined} alt="" className='sm:w-[50px] sm:h-[50px] min-w-[40px] min-h-[40px]' />
+                            <img src={item.qrCode || undefined} alt="" className='sm:w-[50px] sm:h-[50px] min-w-[40px] min-h-[40px]' />
                           </picture> :
                             <picture>
                               <img src={item.logo?.asset.url || item.image.asset.url} alt="" className='sm:w-[50px] sm:h-[50px] min-w-[40px] min-h-[40px]' />
