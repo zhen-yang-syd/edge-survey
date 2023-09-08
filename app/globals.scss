@@ -3,15 +3,22 @@
 @tailwind utilities;
 @import '~antd/dist/reset.css';
 
-// .ant-select-item-option-content {
-//     color:black !important;
-// }
-// .ant-form-item .ant-form-item-label >label {
-//     color:white !important;
-// }
-// .ant-upload-wrapper.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select >.ant-upload, :where(.css-dev-only-do-not-override-1rccjku).ant-upload-wrapper.ant-upload-picture-circle-wrapper .ant-upload.ant-upload-select >.ant-upload {
-//     color: white !important;
-// }
-// .ant-card{
-//     background-color: transparent !important;
-// }
+.ant-select-selection-placeholder {
+    color: white !important;
+}
+
+.ant-pagination .ant-pagination-item a {
+    color: white !important;
+}
+
+.ant-pagination .ant-pagination-item-active a {
+    color: black !important;
+}
+
+.ant-pagination .ant-pagination-prev button,
+.ant-pagination .ant-pagination-next button {
+    color: white !important;
+}
+.ant-table-wrapper .ant-table-thead >tr>th, :where(.css-dev-only-do-not-override-1fzwd7r).ant-table-wrapper .ant-table-thead >tr>td {
+    color: white !important;
+}

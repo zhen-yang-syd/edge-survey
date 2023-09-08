@@ -66,9 +66,9 @@ const CreateTarget: React.FC<Props> = ({ setTarget, setTargetName }) => {
             placeholder="Select target"
             dropdownRender={(menu) => (
                 <>
-                    {loading && items ? <Skeleton loading className='p-3' active/> : <>{menu}</>}
+                    {loading && items ? <Skeleton loading className='p-3' active /> : <>{menu}</>}
                     <Divider style={{ margin: '8px 0' }} />
-                    {loading && items ? <Skeleton loading className='p-3' active/> : (
+                    {loading && items ? <Skeleton loading className='p-3' active /> : (
                         <Space style={{ padding: '0 8px 4px' }}>
                             <Input
                                 placeholder="Please enter item"
@@ -85,13 +85,7 @@ const CreateTarget: React.FC<Props> = ({ setTarget, setTargetName }) => {
                 </>
             )}
             options={items.map((item: any) => ({ label: item.label, value: item.value }))}
-            // onChange={(option,value) => {
-            //     console.log('option', option)
-            //     setTarget(option.value);
-            //     setTargetName(option.label)
-            // }}
             onSelect={(value, option) => {
-                // console.log('option', option.value)
                 setTarget(option.value || value);
                 setTargetName(option.label || value)
             }}
