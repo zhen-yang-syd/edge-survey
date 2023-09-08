@@ -6,15 +6,11 @@ import { BASE_URL } from '@/utils'
 import useSurveyStore from '@/store/surveyStore'
 import { Survey } from '@/type'
 import { BiLeftArrowAlt } from 'react-icons/bi'
-import { message, Button, Spin, Space, Table, Tag, ConfigProvider } from 'antd'
+import { message, Button, Spin, Table, ConfigProvider } from 'antd'
 import type { ColumnsType } from 'antd/es/table';
 import { LoadingOutlined } from '@ant-design/icons'
-import CreateTarget from '@/component/CreateTarget'
-import ImgCrop from 'antd-img-crop'
-import { CloseOutlined } from '@ant-design/icons'
-import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
-import { client } from '@/utils/client'
 import { v4 } from 'uuid'
+import { mkConfig, generateCsv, download } from "export-to-csv";
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin rev={undefined} />;
 
@@ -52,15 +48,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   ];
 
   const data: DataType[] = [];
-  // for (let i = 0; i < 46; i++) {
-  //   data.push({
-  //     key: i,
-  //     name: `Edward King ${i}`,
-  //     phone: `12323333${3}`,
-  //     email: `London, Park Lane no. ${i}`,
-  //     date: '2021-09-09'
-  //   });
-  // }
+  const csvConfig = mkConfig({ useKeysAsHeaders: true });
   const [result, setResult] = useState<any[]>()
   const [resultList, setResultList] = useState<any[]>()
   useEffect(() => {
@@ -111,19 +99,41 @@ export default function Page({ params }: { params: { slug: string } }) {
       message.success('Generate QR Code successfully')
     }
   }
+  const downloadCsv = async () => {
+    const csvConfig = mkConfig({ useKeysAsHeaders: true });
+
+    const mockData = [
+      {
+        name: "Rouky",
+        date: "2023-09-01",
+        percentage: 0.4,
+        quoted: '"Pickles"',
+      },
+      {
+        name: "Keiko",
+        date: "2023-09-01",
+        percentage: 0.9,
+        quoted: '"Cactus"',
+      },
+    ];
+
+    // Converts your Array<Object> to a CsvOutput string based on the configs
+    const csv = generateCsv(csvConfig)(resultList!);
+    download(csvConfig)(csv);
+  }
 
   return (
     <ConfigProvider
-    theme={
-      {
-        components: {
-          Table: {
-            colorBgContainer: 'rgba(0, 0, 0, 0.04)',
-            colorText: 'white',
+      theme={
+        {
+          components: {
+            Table: {
+              colorBgContainer: 'rgba(0, 0, 0, 0.04)',
+              colorText: 'white',
+            }
           }
         }
       }
-    }
     >
       {
         item && !loading ? <div className='text-black w-screen h-screen bg-cover px-5 py-10' style={{ backgroundImage: `url(${item.image.asset.url})` }}>
@@ -133,6 +143,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             <div className='flex flex-col gap-5 w-full justify-center items-center my-10'>
               {item.qrCode && <img src={item.qrCode} alt="" className='w-[200px]' />}
               <Button onClick={() => generateQRCode()} className='text-white w-[153px] flex justify-center items-center' disabled={buttonLoading}>{buttonLoading ? <Spin indicator={antIcon} /> : 'Generate QR Code'}</Button>
+              <Button onClick={() => downloadCsv()} className='text-white w-[153px] flex justify-center items-center'>{buttonLoading ? <Spin indicator={antIcon} /> : 'Download CSV'}</Button>
             </div>
             {/* display the result */}
             <Table columns={columns} dataSource={resultList} />
