@@ -29,7 +29,9 @@ export default function Home() {
       getData().then((res) => {
         console.log('res', res.data)
         // expires 10 mins
-        Cookie.set('getSurvey', 'true', { expires: 1 })
+        let date = new Date()
+        date.setTime(date.getTime() + (1 * 60 * 1000));
+        Cookie.set('getSurvey', 'true', { expires: date })
         updateSurvey(res.data)
         setLoading(false)
       })
