@@ -19,11 +19,7 @@ export async function GET(req: NextRequest) {
             type,
             options[],
         },
-        qrCode {
-            asset->{
-                url,
-            }
-        },
+        qrCode,
         createdAt,
         logo {
             asset->{

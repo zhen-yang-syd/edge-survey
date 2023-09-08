@@ -91,7 +91,6 @@ export default function Page({ params }: { params: { slug: string } }) {
       setResultList(data)
     }
   }, [result])
-  console.log(data)
   const generateQRCode = async () => {
     setButtonLoading(true)
     const { data } = await axios.post(`${BASE_URL}/api/qrcode`, { surveyId: params.slug, imageUrl: item?.image.asset.url })
