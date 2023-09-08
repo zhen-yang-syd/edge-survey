@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const { surveyId, imageUrl } = body
     const data1 = {
         "apikey": `${NEXT_QR_API_KEY}`,
-        "data": `${BASE_URL}/survey/${surveyId}`,
+        "data": `${BASE_URL}/form/${surveyId}`,
         "transparent": "off",
         "backcolor": "#033895",
         "frontcolor": "#ffffff",
